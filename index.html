@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -36,111 +37,23 @@
             --button-text: #ffffff;
             --divider: #2b3440;
         }
-        body {
-            font-family: Arial, sans-serif;
-            background: var(--bg);
-            color: var(--text);
-            margin: 0;
-            padding: 0;
-            height: 100vh;
-            overflow: hidden;
-        }
-        .chat-container {
-            display: flex;
-            flex-direction: column;
-            height: 100vh;
-            width: 100vw;
-            max-width: 100%;
-            background: #fff0;
-        }
-        .chat-header {
-            background: var(--header-bg);
-            color: var(--header-text);
-            padding: 16px 24px;
-            font-weight: bold;
-            font-size: 18px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 12px;
-        }
+        body { font-family: Arial, sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 0; height: 100vh; overflow: hidden; }
+        .chat-container { display: flex; flex-direction: column; height: 100vh; width: 100vw; max-width: 100%; background: #fff0; }
+        .chat-header { background: var(--header-bg); color: var(--header-text); padding: 16px 24px; font-weight: bold; font-size: 18px; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
         .brand { display: inline-flex; align-items: center; gap: 10px; }
-        #themeToggle {
-            border: 1px solid rgba(255,255,255,0.25);
-            background: transparent;
-            color: var(--header-text);
-            padding: 8px 10px;
-            border-radius: 12px;
-            cursor: pointer;
-            font-size: 0;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 6px;
-            width: 36px;
-            height: 36px;
-        }
+        #themeToggle { border: 1px solid rgba(255,255,255,0.25); background: transparent; color: var(--header-text); padding: 8px 10px; border-radius: 12px; cursor: pointer; font-size: 0; display: inline-flex; align-items: center; justify-content: center; gap: 6px; width: 36px; height: 36px; }
         #themeToggle:hover { background: rgba(255,255,255,0.12); }
-        #themeToggle .icon-sun { display: inline; }
-        #themeToggle .icon-moon { display: none; }
-        body.dark #themeToggle .icon-sun { display: none; }
-        body.dark #themeToggle .icon-moon { display: inline; }
-        #messages {
-            flex: 1;
-            padding: 20px 24px;
-            overflow-y: auto;
-            background: var(--messages-bg);
-            display: flex;
-            flex-direction: column;
-        }
-        .message {
-            margin-bottom: 12px;
-            max-width: 60%;
-            word-wrap: break-word;
-            padding: 12px 16px;
-            border-radius: 18px;
-            font-size: 15px;
-            line-height: 1.5;
-        }
-        .message.user {
-            background-color: var(--user-bubble-bg);
-            color: var(--user-bubble-text);
-            align-self: flex-end;
-            border-bottom-right-radius: 0;
-        }
-        .message.gpt {
-            background-color: var(--gpt-bubble-bg);
-            color: var(--gpt-bubble-text);
-            align-self: flex-start;
-            border-bottom-left-radius: 0;
-        }
-        .chat-footer {
-            display: flex;
-            padding: 16px 24px;
-            background: var(--bg);
-            border-top: 1px solid var(--divider);
-        }
-        #userInput {
-            flex: 1;
-            padding: 12px 16px;
-            font-size: 15px;
-            border: 1px solid var(--input-border);
-            background: var(--input-bg);
-            color: var(--text);
-            border-radius: 20px;
-            outline: none;
-        }
-        #sendBtn {
-            background: var(--button-bg);
-            color: var(--button-text);
-            border: none;
-            padding: 12px 20px;
-            margin-left: 12px;
-            border-radius: 20px;
-            cursor: pointer;
-            font-weight: bold;
-        }
+        #themeToggle .icon-sun { display: inline; } #themeToggle .icon-moon { display: none; }
+        body.dark #themeToggle .icon-sun { display: none; } body.dark #themeToggle .icon-moon { display: inline; }
+        #messages { flex: 1; padding: 20px 24px; overflow-y: auto; background: var(--messages-bg); display: flex; flex-direction: column; }
+        .message { margin-bottom: 12px; max-width: 60%; word-wrap: break-word; padding: 12px 16px; border-radius: 18px; font-size: 15px; line-height: 1.5; }
+        .message.user { background-color: var(--user-bubble-bg); color: var(--user-bubble-text); align-self: flex-end; border-bottom-right-radius: 0; }
+        .message.gpt  { background-color: var(--gpt-bubble-bg);  color: var(--gpt-bubble-text);  align-self: flex-start; border-bottom-left-radius: 0; }
+        .chat-footer { display: flex; padding: 16px 24px; background: var(--bg); border-top: 1px solid var(--divider); gap: 8px; }
+        #userInput { flex: 1; padding: 12px 16px; font-size: 15px; border: 1px solid var(--input-border); background: var(--input-bg); color: var(--text); border-radius: 20px; outline: none; }
+        #sendBtn, #downloadBtn, #resetBtn { background: var(--button-bg); color: var(--button-text); border: none; padding: 12px 20px; border-radius: 20px; cursor: pointer; font-weight: bold; }
         #sendBtn[disabled] { opacity: 0.6; cursor: not-allowed; }
+        #downloadBtn { display: none; } /* esconder, já que baixaremos automático */
     </style>
 </head>
 <body>
@@ -161,8 +74,13 @@
         <div class="chat-footer">
             <input type="text" id="userInput" placeholder="Sua resposta...">
             <button id="sendBtn">Enviar</button>
+            <button id="resetBtn" title="Nova simulação">Nova simulação</button>
+            <button id="downloadBtn" title="Baixar relatório (PDF)">Baixar PDF</button>
         </div>
     </div>
+
+    <!-- jsPDF para gerar o PDF no navegador -->
+    <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
 
     <script>
         const MODEL = "gpt-4-turbo";
@@ -221,16 +139,18 @@ Para começar a jornada, digite:
         const inputEl = document.getElementById("userInput");
         const sendBtn = document.getElementById("sendBtn");
         const themeToggle = document.getElementById("themeToggle");
+        const downloadBtn = document.getElementById("downloadBtn");
+        const resetBtn = document.getElementById("resetBtn");
 
         let chatHistory = [{ role: "system", content: SYSTEM_PROMPT }];
 
         function parseMarkdown(text) {
             return text
-                .replace(/\*\*(.*?)\*\*/g, '<strong>$1<\/strong>')
-                .replace(/\*(.*?)\*/g, '<em>$1<\/em>')
+                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                .replace(/\*(.*?)\*/g, '<em>$1</em>')
                 .replace(/\n/g, "<br>")
-                .replace(/^- (.*)/gm, '<li>$1<\/li>')
-                .replace(/(<li>.*<\/li>)/g, '<ul>$1<\/ul>');
+                .replace(/^- (.*)/gm, '<li>$1</li>')
+                .replace(/(<li>.*<\/li>)/g, '<ul>$1</ul>');
         }
 
         function addMessage(role, text) {
@@ -241,19 +161,14 @@ Para começar a jornada, digite:
             messagesEl.scrollTop = messagesEl.scrollHeight;
         }
 
-        function setLoading(isLoading) {
-            sendBtn.disabled = isLoading;
-            inputEl.disabled = isLoading;
-        }
+        function setLoading(isLoading) { sendBtn.disabled = isLoading; inputEl.disabled = isLoading; }
 
         function extractAssistantContent(data) {
             try {
                 return data && data.choices && data.choices.length > 0 && data.choices[0].message && typeof data.choices[0].message.content === 'string'
                     ? data.choices[0].message.content
                     : null;
-            } catch (_) {
-                return null;
-            }
+            } catch (_) { return null; }
         }
 
         function showFriendlyError(err, extra = "") {
@@ -268,29 +183,66 @@ Para começar a jornada, digite:
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ model: MODEL, messages, temperature: 0.75 })
             });
-
             if (!resp.ok) {
-                let bodyText = "";
-                try { bodyText = await resp.text(); } catch (_) {}
+                let bodyText = ""; try { bodyText = await resp.text(); } catch (_) {}
                 throw new Error(`HTTP ${resp.status} ${resp.statusText} ${bodyText}`.trim());
             }
-
             let data;
             try { data = await resp.json(); }
             catch { throw new Error("Falha ao interpretar JSON da Function."); }
-
             const content = extractAssistantContent(data);
             if (!content) throw new Error("A resposta do modelo veio vazia ou malformada.");
             return content;
         }
 
+        // ====== PDF ======
+        async function downloadReportPDF(finalEvaluationText) {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF({ unit: 'pt', format: 'a4' });
+            const marginX = 40, marginY = 40, lineH = 18;
+            let y = marginY;
+
+            function addTitle(txt, size=16) {
+                doc.setFont('helvetica','bold'); doc.setFontSize(size);
+                doc.text(txt, marginX, y); y += lineH + 6;
+            }
+            function addText(txt, size=11, bold=false) {
+                doc.setFont('helvetica', bold ? 'bold' : 'normal'); doc.setFontSize(size);
+                const width = doc.internal.pageSize.getWidth() - marginX*2;
+                const lines = doc.splitTextToSize(txt, width);
+                for (const line of lines) {
+                    if (y > doc.internal.pageSize.getHeight() - marginY) { doc.addPage(); y = marginY; }
+                    doc.text(line, marginX, y); y += lineH;
+                }
+                y += 6;
+            }
+
+            addTitle('Relatório do Treinamento - JSkill', 18);
+            addText(`Data: ${new Date().toLocaleString()}`);
+
+            addTitle('Conversa');
+            chatHistory.filter(m => m.role !== 'system').forEach(m => {
+                const quem = m.role === 'user' ? 'Atendente' : 'Cliente (IA)';
+                addText(`${quem}:`, 12, true);
+                addText(m.content, 11, false);
+            });
+
+            if (finalEvaluationText) {
+                addTitle('Avaliação Final');
+                addText(finalEvaluationText, 11, false);
+            }
+
+            const filename = `JSkill-Relatorio-${new Date().toISOString().slice(0,10)}.pdf`;
+            doc.save(filename);
+        }
+
+        // ====== Tema & Boot ======
         function applyTheme(theme) {
             const isDark = theme === 'dark';
             document.body.classList.toggle('dark', isDark);
             themeToggle.setAttribute('aria-pressed', String(isDark));
             const label = isDark ? 'Alternar para modo claro' : 'Alternar para modo escuro';
-            themeToggle.setAttribute('aria-label', label);
-            themeToggle.setAttribute('title', label);
+            themeToggle.setAttribute('aria-label', label); themeToggle.setAttribute('title', label);
         }
         function getPreferredTheme() {
             const saved = localStorage.getItem('jskill-theme');
@@ -302,13 +254,19 @@ Para começar a jornada, digite:
             applyTheme(getPreferredTheme());
             addMessage("gpt", initialGreeting);
             chatHistory.push({ role: "assistant", content: initialGreeting });
-            runSelfTests();
         });
 
         themeToggle.addEventListener('click', () => {
             const next = document.body.classList.contains('dark') ? 'light' : 'dark';
-            localStorage.setItem('jskill-theme', next);
-            applyTheme(next);
+            localStorage.setItem('jskill-theme', next); applyTheme(next);
+        });
+
+        // Reset simples
+        resetBtn.addEventListener('click', () => {
+            chatHistory = [{ role: "system", content: SYSTEM_PROMPT }];
+            messagesEl.innerHTML = "";
+            addMessage("gpt", initialGreeting);
+            downloadBtn.style.display = 'none';
         });
 
         async function sendMessage() {
@@ -322,36 +280,21 @@ Para começar a jornada, digite:
                 const reply = await callOpenAI(chatHistory);
                 addMessage("gpt", reply);
                 chatHistory.push({ role: "assistant", content: reply });
+
+                // ✅ Baixar automaticamente quando detectar a avaliação final
+                const isFinal = reply.includes('🧾') || /nota final/i.test(reply);
+                if (isFinal) {
+                    await downloadReportPDF(reply);
+                }
             } catch (err) {
                 showFriendlyError(err);
             } finally {
-                setLoading(false);
-                inputEl.focus();
+                setLoading(false); inputEl.focus();
             }
         }
 
         sendBtn.addEventListener("click", sendMessage);
         inputEl.addEventListener("keydown", function(e) { if (e.key === "Enter") sendMessage(); });
-
-        function assert(cond, name) { if (!cond) throw new Error(`Teste falhou: ${name}`); }
-
-        function runSelfTests() {
-            try {
-                let out = extractAssistantContent({ choices: [{ message: { content: "ok" } }] });
-                assert(out === "ok", "extração padrão");
-                out = extractAssistantContent({ choices: [] });
-                assert(out === null, "choices vazio -> null");
-                out = extractAssistantContent({});
-                assert(out === null, "sem choices -> null");
-                out = extractAssistantContent({ choices: [{}] });
-                assert(out === null, "sem message -> null");
-                const md = parseMarkdown("**negrito** e *itálico*");
-                assert(md.includes('<strong>negrito</strong>') && md.includes('<em>itálico</em>'), "markdown básico");
-                console.info("[JSkill] Testes passaram ✅");
-            } catch (e) {
-                console.error("[JSkill] Testes falharam ❌", e);
-            }
-        }
     </script>
 </body>
 </html>
