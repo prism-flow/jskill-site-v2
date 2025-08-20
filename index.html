@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>JSkill - Simulador de Atendimento</title>
+    <style>
+        :root {
+            --bg: #fefefe;
+            --messages-bg: #f9f9f9;
+            --text: #1a1a1a;
+            --header-bg: #0084ff;
+            --header-text: #ffffff;
+            --user-bubble-bg: #0084ff;
+            --user-bubble-text: #ffffff;
+            --gpt-bubble-bg: #e5e5ea;
+            --gpt-bubble-text: #1a1a1a;
+            --input-bg: #ffffff;
+            --input-border: #cccccc;
+            --button-bg: #0084ff;
+            --button-text: #ffffff;
+            --divider: #dddddd;
+        }
+        body.dark {
+            --bg: #0f141a;
+            --messages-bg: #0b1117;
+            --text: #e8edf2;
+            --header-bg: #0a66cc;
+            --header-text: #eaf2ff;
+            --user-bubble-bg: #1e90ff;
+            --user-bubble-text: #ffffff;
+            --gpt-bubble-bg: #222933;
+            --gpt-bubble-text: #e8edf2;
+            --input-bg: #151b22;
+            --input-border: #2b3440;
+            --button-bg: #1e90ff;
+            --button-text: #ffffff;
+            --divider: #2b3440;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            overflow: hidden;
+        }
+        .chat-container {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            width: 100vw;
+            max-width: 100%;
+            background: #fff0;
+        }
+        .chat-header {
+            background: var(--header-bg);
+            color: var(--header-text);
+            padding: 16px 24px;
+            font-weight: bold;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+        }
+        .brand { display: inline-flex; align-items: center; gap: 10px; }
+        #themeToggle {
+            border: 1px solid rgba(255,255,255,0.25);
+            background: transparent;
+            color: var(--header-text);
+            padding: 8px 10px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 0;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            width: 36px;
+            height: 36px;
+        }
+        #themeToggle:hover { background: rgba(255,255,255,0.12); }
+        #themeToggle .icon-sun { display: inline; }
+        #themeToggle .icon-moon { display: none; }
+        body.dark #themeToggle .icon-sun { display: none; }
+        body.dark #themeToggle .icon-moon { display: inline; }
+        #messages {
+            flex: 1;
+            padding: 20px 24px;
+            overflow-y: auto;
+            background: var(--messages-bg);
+            display: flex;
+            flex-direction: column;
+        }
+        .message {
+            margin-bottom: 12px;
+            max-width: 60%;
+            word-wrap: break-word;
+            padding: 12px 16px;
+            border-radius: 18px;
+            font-size: 15px;
+            line-height: 1.5;
+        }
+        .message.user {
+            background-color: var(--user-bubble-bg);
+            color: var(--user-bubble-text);
+            align-self: flex-end;
+            border-bottom-right-radius: 0;
+        }
+        .message.gpt {
+            background-color: var(--gpt-bubble-bg);
+            color: var(--gpt-bubble-text);
+            align-self: flex-start;
+            border-bottom-left-radius: 0;
+        }
+        .chat-footer {
+            display: flex;
+            padding: 16px 24px;
+            background: var(--bg);
+            border-top: 1px solid var(--divider);
+        }
+        #userInput {
+            flex: 1;
+            padding: 12px 16px;
+            font-size: 15px;
+            border: 1px solid var(--input-border);
+            background: var(--input-bg);
+            color: var(--text);
+            border-radius: 20px;
+            outline: none;
+        }
+        #sendBtn {
+            background: var(--button-bg);
+            color: var(--button-text);
+            border: none;
+            padding: 12px 20px;
+            margin-left: 12px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        #sendBtn[disabled] { opacity: 0.6; cursor: not-allowed; }
+    </style>
+</head>
+<body>
+    <div class="chat-container">
+        <div class="chat-header">
+            <div class="brand">JSkill - Simulador de Atendimento</div>
+            <button id="themeToggle" type="button" aria-pressed="false" aria-label="Alternar para modo escuro" title="Alternar para modo escuro">
+                <svg class="icon-sun" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <circle cx="12" cy="12" r="4"/>
+                    <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/>
+                </svg>
+                <svg class="icon-moon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+                </svg>
+            </button>
+        </div>
+        <div id="messages"></div>
+        <div class="chat-footer">
+            <input type="text" id="userInput" placeholder="Sua resposta...">
+            <button id="sendBtn">Enviar</button>
+        </div>
+    </div>
+
+    <script>
+        const MODEL = "gpt-4-turbo";
+
+        const SYSTEM_PROMPT = `Você é o 'JSkill', uma IA especializada em treinar atendentes de suporte técnico de um ISP.
+
+🎯 Função principal:
+Simular atendimentos reais com clientes do provedor, representando situações comuns ou complexas do dia a dia de um provedor de internet, com linguagem, comportamento e reações realistas.
+
+🧠 Novo requisito:
+Sempre que simular um cliente, indique claramente a emoção atual no início da mensagem, no formato **[emoji + emoção]**, como:
+- [😠 Irritado], [😕 Confuso], [😊 Aliviado], [😭 Frustrado], [🤔 Pensativo], [😍 Agradecido] etc.
+Use também emojis sutis durante as falas, mas com moderação, para transmitir o tom emocional. Use emojis sutis ao longo da conversa, para reforçar o tom emocional da fala.
+Exemplo: “Tô tentando trabalhar e a internet some 😤”
+
+Reaja como um cliente real: exija, questione, teste a paciência, explore falas curtas, longas, ágeis ou lentas, conforme o perfil simulado.
+
+Não encerre a conversa sozinho. Aguarde o atendente dar a solução final e o cliente de despedir em atendimento.
+
+Ao final de cada atendimento simulado, pare de interpretar o cliente e gere uma avaliação automática, com os seguintes critérios:
+📝 Avaliação Técnica ao Final de Cada Simulação:
+✅ Pontos positivos (acertos do atendente: linguagem, clareza, domínio técnico, simpatia, etc)
+
+⚠️ Oportunidades de melhoria (erros técnicos, má comunicação, falta de empatia, etc)
+
+💡 Dicas práticas (melhorias para próximos atendimentos)
+
+🧾 Nota final de 1 a 5
+
+🔁 Regras da simulação:
+- Atue como um cliente real, reagindo com emoção e expressividade.
+- Questione, reaja e exija soluções claras.
+- Não finalize sem um encerramento por parte do cliente ou solução.
+- Após o atendimento, pare de simular e gere uma avaliação (✅ Pontos positivo (se não identifcar nenhum ponto positivo pode informar sem pena que não teve nenhum), ⚠️ Oportunidades de melhoria, 💡 Dicas práticas para o atendente, 🧾 Nota de 1 de 5).
+
+⚠️ Restrições e requisitos:
+Não responda perguntas genéricas ou assuntos fora do contexto de atendimento simulado.
+Quando a simulação informe o nivel, mas não informe a situação, apenas a mensagem do cliente que esta simulando com suas questões e emoções`;
+
+        const initialGreeting = `🧠 **Treinamento de Atendimento**
+
+Olá! 👋 Está preparado(a)?
+
+Você vai passar por **10 níveis de clientes** com problemas **reais e técnicos**, começando pelos casos mais simples e avançando até os mais complexos.
+
+Seu desafio será entender, orientar, resolver e lidar com as emoções de cada cliente.
+
+No final, você receberá uma **avaliação automática** com pontos positivos, melhorias e nota de desempenho.
+
+Após concluir todos os níveis, avise o supervisor para análise.
+
+Para começar a jornada, digite:  
+**INICIAR**`;
+
+        const messagesEl = document.getElementById("messages");
+        const inputEl = document.getElementById("userInput");
+        const sendBtn = document.getElementById("sendBtn");
+        const themeToggle = document.getElementById("themeToggle");
+
+        let chatHistory = [{ role: "system", content: SYSTEM_PROMPT }];
+
+        function parseMarkdown(text) {
+            return text
+                .replace(/\*\*(.*?)\*\*/g, '<strong>$1<\/strong>')
+                .replace(/\*(.*?)\*/g, '<em>$1<\/em>')
+                .replace(/\n/g, "<br>")
+                .replace(/^- (.*)/gm, '<li>$1<\/li>')
+                .replace(/(<li>.*<\/li>)/g, '<ul>$1<\/ul>');
+        }
+
+        function addMessage(role, text) {
+            const msgDiv = document.createElement("div");
+            msgDiv.className = "message " + role;
+            msgDiv.innerHTML = parseMarkdown(text);
+            messagesEl.appendChild(msgDiv);
+            messagesEl.scrollTop = messagesEl.scrollHeight;
+        }
+
+        function setLoading(isLoading) {
+            sendBtn.disabled = isLoading;
+            inputEl.disabled = isLoading;
+        }
+
+        function extractAssistantContent(data) {
+            try {
+                return data && data.choices && data.choices.length > 0 && data.choices[0].message && typeof data.choices[0].message.content === 'string'
+                    ? data.choices[0].message.content
+                    : null;
+            } catch (_) {
+                return null;
+            }
+        }
+
+        function showFriendlyError(err, extra = "") {
+            console.error("[JSkill] Erro na chamada de API:", err);
+            const hint = typeof err === 'string' ? err : (err && err.message ? err.message : "Erro desconhecido");
+            addMessage("gpt", `⚠️ Não consegui obter resposta agora.\n\nPossíveis causas:\n- Falha de rede;\n- Modelo indisponível;\n- Erro no servidor.\n\nDetalhes: ${hint}${extra ? `\n${extra}` : ''}`);
+        }
+
+        async function callOpenAI(messages) {
+            const resp = await fetch("/.netlify/functions/chat", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ model: MODEL, messages, temperature: 0.75 })
+            });
+
+            if (!resp.ok) {
+                let bodyText = "";
+                try { bodyText = await resp.text(); } catch (_) {}
+                throw new Error(`HTTP ${resp.status} ${resp.statusText} ${bodyText}`.trim());
+            }
+
+            let data;
+            try { data = await resp.json(); }
+            catch { throw new Error("Falha ao interpretar JSON da Function."); }
+
+            const content = extractAssistantContent(data);
+            if (!content) throw new Error("A resposta do modelo veio vazia ou malformada.");
+            return content;
+        }
+
+        function applyTheme(theme) {
+            const isDark = theme === 'dark';
+            document.body.classList.toggle('dark', isDark);
+            themeToggle.setAttribute('aria-pressed', String(isDark));
+            const label = isDark ? 'Alternar para modo claro' : 'Alternar para modo escuro';
+            themeToggle.setAttribute('aria-label', label);
+            themeToggle.setAttribute('title', label);
+        }
+        function getPreferredTheme() {
+            const saved = localStorage.getItem('jskill-theme');
+            if (saved === 'light' || saved === 'dark') return saved;
+            return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        }
+
+        window.addEventListener("DOMContentLoaded", () => {
+            applyTheme(getPreferredTheme());
+            addMessage("gpt", initialGreeting);
+            chatHistory.push({ role: "assistant", content: initialGreeting });
+            runSelfTests();
+        });
+
+        themeToggle.addEventListener('click', () => {
+            const next = document.body.classList.contains('dark') ? 'light' : 'dark';
+            localStorage.setItem('jskill-theme', next);
+            applyTheme(next);
+        });
+
+        async function sendMessage() {
+            const userInput = (inputEl.value || "").trim();
+            if (!userInput) return;
+            addMessage("user", userInput);
+            chatHistory.push({ role: "user", content: userInput });
+            inputEl.value = "";
+            setLoading(true);
+            try {
+                const reply = await callOpenAI(chatHistory);
+                addMessage("gpt", reply);
+                chatHistory.push({ role: "assistant", content: reply });
+            } catch (err) {
+                showFriendlyError(err);
+            } finally {
+                setLoading(false);
+                inputEl.focus();
+            }
+        }
+
+        sendBtn.addEventListener("click", sendMessage);
+        inputEl.addEventListener("keydown", function(e) { if (e.key === "Enter") sendMessage(); });
+
+        function assert(cond, name) { if (!cond) throw new Error(`Teste falhou: ${name}`); }
+
+        function runSelfTests() {
+            try {
+                let out = extractAssistantContent({ choices: [{ message: { content: "ok" } }] });
+                assert(out === "ok", "extração padrão");
+                out = extractAssistantContent({ choices: [] });
+                assert(out === null, "choices vazio -> null");
+                out = extractAssistantContent({});
+                assert(out === null, "sem choices -> null");
+                out = extractAssistantContent({ choices: [{}] });
+                assert(out === null, "sem message -> null");
+                const md = parseMarkdown("**negrito** e *itálico*");
+                assert(md.includes('<strong>negrito</strong>') && md.includes('<em>itálico</em>'), "markdown básico");
+                console.info("[JSkill] Testes passaram ✅");
+            } catch (e) {
+                console.error("[JSkill] Testes falharam ❌", e);
+            }
+        }
+    </script>
+</body>
+</html>
